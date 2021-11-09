@@ -67,7 +67,7 @@
                     app:backgroundTint="@null"
                     android:text="@string/ketban"
                     android:id="@+id/ketban"
-                    android:visibility="@{user.friend ? View.VISIBLE: View.GONE}"
+                    android:visibility="@{user.friend ? View.GONE: View.VISIBLE}"
                     android:textColor="@color/white"
 
                     />

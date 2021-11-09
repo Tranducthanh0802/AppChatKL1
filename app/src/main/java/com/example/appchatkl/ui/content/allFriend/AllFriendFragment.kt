@@ -2,6 +2,7 @@ package com.example.appchatkl.ui.content.allFriend
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +10,24 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appchatkl.R
+import com.example.appchatkl.commomFunction
 import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.AllFriendFragmentBinding
+import com.example.appchatkl.ui.content.allFriend.adapter.AddFriend
+import com.example.appchatkl.ui.content.allFriend.adapter.AllFriendAdapter
 import com.example.appchatkl.ui.content.friend.friend.adapter.FriendAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class AllFriendFragment : Fragment() {
+class AllFriendFragment : Fragment(),AddFriend {
+    val TAG="AllFriendFragment"
     lateinit var binding: AllFriendFragmentBinding
+    lateinit var database: DatabaseReference
+    lateinit var host:String
     companion object {
         fun newInstance() = AllFriendFragment()
     }
@@ -38,11 +48,14 @@ class AllFriendFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(AllFriendViewModel::class.java)
-        val database: DatabaseReference
+
         database = Firebase.database.reference
         var list = ArrayList<User>()
-        viewModel.getAllUser(database, list)
-        val friendAdapter= FriendAdapter()
+        var auth: FirebaseAuth = Firebase.auth
+        val currentUser: FirebaseUser? = auth.currentUser
+         host=commomFunction.getId(currentUser!!)
+        viewModel.getAllUser(database, list,host)
+        val friendAdapter= AllFriendAdapter(this)
         binding.stickyListFriend.apply {
             adapter = friendAdapter
             layoutManager = LinearLayoutManager(
@@ -55,6 +68,12 @@ class AllFriendFragment : Fragment() {
             friendAdapter.listConversation = it
             binding.stickyListFriend.adapter?.notifyDataSetChanged()
         })
+
+    }
+
+    override fun onclick(s: String) {
+        val a=viewModel.idSendReQuest.value+s+","
+        database.child("request").child(host).child("sendRequest").setValue(a)
     }
 
 }

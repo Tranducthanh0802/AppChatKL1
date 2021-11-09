@@ -2,6 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="android.view.View"/>
         <import type="com.example.appchatkl.data.Conversation"/>
         <variable
             name="conversation"
@@ -12,6 +13,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/_15sdp"
         android:layout_marginLeft="@dimen/_10sdp"
+        android:id="@+id/Linear"
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_height="wrap_content">
         <RelativeLayout
@@ -32,18 +34,24 @@
                 android:layout_height="@dimen/_21sdp"
                 android:layout_marginLeft="@dimen/_50sdp"
                  android:layout_marginTop="@dimen/_5sdp"
+                android:visibility="@{conversation.notificat ? View.GONE: View.VISIBLE}"
                 android:background="@drawable/button_mn"
                 >
+
                 <TextView
-                    android:layout_width="@dimen/_19sdp"
-                    android:layout_height="@dimen/_19sdp"
-                    android:text="@{conversation.notification}"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/text"
-                    android:layout_margin="@dimen/_2sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginLeft="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_2sdp"
+                    android:layout_marginRight="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_2sdp"
                     android:background="@drawable/notifical_adap"
-                    />
+                    android:gravity="center"
+                    android:text="@{conversation.count}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text" />
             </RelativeLayout>
 
         </RelativeLayout>
@@ -71,7 +79,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/edit"
+                android:visibility="@{conversation.find ?View.GONE:View.VISIBLE}"
                 android:text="@{conversation.message.message}"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/_7sdp"
+                />
+            <TextView
+                android:layout_below="@id/hovaten_adap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/edit"
+                android:text="@{conversation.notification}"
+                android:visibility="@{conversation.find ? View.GONE: View.VISIBLE}"
                 android:textColor="@color/black"
                 android:layout_marginTop="@dimen/_7sdp"
                 />
@@ -81,6 +100,7 @@
                 android:textColor="@color/black"
                 android:layout_alignParentRight="true"
                 android:text="@{conversation.message.time}"
+                android:visibility="@{conversation.find ? View.GONE: View.VISIBLE}"
                 android:id="@+id/time_adap"
                 />
 

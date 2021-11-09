@@ -8,6 +8,7 @@ class Message(
     var image:String="",
     var isImage:Boolean=false,
     var isShowTime:Boolean=false,
-    var isShowAvata:Boolean=false
+    var isShowAvata:Boolean=false,
+    var isRight:Boolean=false
 ) {
 }

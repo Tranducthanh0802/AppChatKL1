@@ -13,14 +13,14 @@ import com.example.appchatkl.R
 import com.example.appchatkl.data.Message
 import com.example.appchatkl.databinding.*
 import com.example.appchatkl.ui.content.createConversation.adapter.CreateConversationAdapter
+import kotlin.math.log
 
 private const val messageLeft = 1
 private const val messageRight = 2
 private const val imageLeft = 3
 private const val imageRight = 4
-private const val id="3CHe0xpw0POKGRem9T3UmMTBkih2"
 private const val TAG="ChatAdapter"
-class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(val id:String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     private val diffCallback = object : DiffUtil.ItemCallback<Message>() {
@@ -49,8 +49,10 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 binding.message= currentTvShow
                 else if( binding is ItemMessageImageRightBinding)
                     binding.message= currentTvShow
-                else if( binding is ItemMessageLeftBinding)
+                else if( binding is ItemMessageLeftBinding){
                     binding.message= currentTvShow
+                    Log.d(TAG, "bind: "+currentTvShow.avata)
+                }
                 else if( binding is ItemMessageRightBinding)
                     binding.message= currentTvShow
 
@@ -97,7 +99,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount() = listConversation.size
 
     override fun getItemViewType(position: Int): Int {
-        if(!listConversation.get(position).id.equals(id)){
+        if(listConversation.get(position).id.equals(id)){
             if(listConversation.get(position).isImage){
                 return imageRight;
             }else return messageRight;

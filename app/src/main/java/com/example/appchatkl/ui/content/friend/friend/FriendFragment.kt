@@ -9,9 +9,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appchatkl.R
+import com.example.appchatkl.commomFunction
 import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.FriendFragmentBinding
 import com.example.appchatkl.ui.content.friend.friend.adapter.FriendAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -41,7 +45,10 @@ class FriendFragment : Fragment() {
         val database: DatabaseReference
         database = Firebase.database.reference
         var list = ArrayList<User>()
-        viewModel.getAllUser(database, list)
+        var auth: FirebaseAuth = Firebase.auth
+        val currentUser: FirebaseUser? = auth.currentUser
+        val host= commomFunction.getId(currentUser!!)
+        viewModel.getAllUser(database, list,host)
         val friendAdapter=FriendAdapter()
         binding.stickyListFriend.apply {
             adapter = friendAdapter

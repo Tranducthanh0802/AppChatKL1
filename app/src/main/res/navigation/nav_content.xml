@@ -11,21 +11,20 @@
         android:label="list_message_fragment"
         tools:layout="@layout/list_message_fragment" >
         <action
-            android:id="@+id/action_listMessageFragment_to_friendFragment"
-            app:destination="@id/friendFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/friendFragment"
-        android:name="com.example.appchatkl.ui.content.friend.friend.FriendFragment"
-        android:label="friend_fragment"
-        tools:layout="@layout/friend_fragment" >
-        <action
-            android:id="@+id/action_friendFragment_to_userFragment"
-            app:destination="@id/userFragment" />
+            android:id="@+id/action_listMessageFragment_to_tablayouFiendFragment"
+            app:destination="@id/tablayouFiendFragment" />
     </fragment>
     <fragment
         android:id="@+id/userFragment"
         android:name="com.example.appchatkl.ui.content.user.UserFragment"
         android:label="user_fragment"
         tools:layout="@layout/user_fragment" />
+    <fragment
+        android:id="@+id/tablayouFiendFragment"
+        android:name="com.example.appchatkl.ui.content.friend.TablayouFiendFragment"
+        android:label="TablayouFiendFragment" >
+        <action
+            android:id="@+id/action_tablayouFiendFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+    </fragment>
 </navigation>

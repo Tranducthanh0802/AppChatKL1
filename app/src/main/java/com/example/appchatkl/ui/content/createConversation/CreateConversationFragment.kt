@@ -7,18 +7,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appchatkl.R
+import com.example.appchatkl.commomFunction
+import com.example.appchatkl.data.Chat
 import com.example.appchatkl.data.CreateConversation
 import com.example.appchatkl.data.Message
 import com.example.appchatkl.databinding.CreateConversationFragmentBinding
 import com.example.appchatkl.ui.content.createConversation.adapter.CreateConversationAdapter
 import com.example.appchatkl.ui.content.createConversation.adapter.SelectFriendAdapter
 import com.example.appchatkl.ui.content.createConversation.adapter.onclick
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlin.math.log
 
 class CreateConversationFragment : Fragment(), onclick {
     var TAG = "CreateConversationFragment"
@@ -54,7 +62,11 @@ class CreateConversationFragment : Fragment(), onclick {
         val database: DatabaseReference
         database = Firebase.database.reference
         var list = ArrayList<CreateConversation>()
-        viewModel.getAllUser(database, list)
+        var auth: FirebaseAuth = Firebase.auth
+        val currentUser: FirebaseUser? = auth.currentUser
+        val id= commomFunction.getId(currentUser!!).toString()
+
+        viewModel.getAllUser(database, list,id)
         binding.recyclerview.apply {
             adapter = createConversationAdapter
             layoutManager = LinearLayoutManager(
@@ -66,7 +78,6 @@ class CreateConversationFragment : Fragment(), onclick {
         viewModel.responseTvShow.observe(viewLifecycleOwner, { listTvShows ->
             createConversationAdapter.listConversation = listTvShows
             binding.recyclerview.adapter?.notifyDataSetChanged()
-            Log.d(TAG, "onActivityCreated: " + createConversationAdapter.itemCount)
 
         })
         binding.recyclerview2.apply {
@@ -83,13 +94,26 @@ class CreateConversationFragment : Fragment(), onclick {
         })
 
         binding.btnOk.setOnClickListener {
-            s=""
+            s+=id+","
+            Log.d(TAG, "onActivityCreated: " +s)
             selectFriendAdapter.listConversation.forEach {
                 s += it.id + ","
+                Log.d(TAG, "onActivityCreated2: " +s)
             }
 
-            viewModel.check(database, s, Message())
+             viewModel.check(database, s, Chat())
+            val controller=findNavController()
+            val bundle = bundleOf("id" to s)
+            controller.navigate(R.id.chatFragment,bundle)
         }
+        binding.btnBack.setOnClickListener{
+            requireActivity().onBackPressed()
+        }
+        binding.txtHuy.setOnClickListener{
+            requireActivity().onBackPressed()
+        }
+
+
 
     }
 
@@ -104,6 +128,13 @@ class CreateConversationFragment : Fragment(), onclick {
         list.remove(conversation)
         viewModel.getListSelect(list)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        list.clear()
+        s=""
+        viewModel.getListSelect(list)
     }
 
 }

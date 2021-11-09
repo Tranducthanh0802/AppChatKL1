@@ -16,11 +16,14 @@
                 android:text="@string/loibanketban"
                 android:textSize="@dimen/text"
                 />
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
-                android:id="@+id/rec_invite_receive"
-                />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:id="@+id/rec_invite_receive"
+                    />
+
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,7 +33,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
+                android:layout_height="@dimen/_100sdp"
                 android:id="@+id/rec_invite_send"
                 />
         </LinearLayout>

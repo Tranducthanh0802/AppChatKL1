@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appchatkl.commomFunction
 import com.example.appchatkl.data.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -30,25 +31,27 @@ class CreateConversationViewModel : ViewModel() {
     fun getAllUser(
         postReference: DatabaseReference,
         list: ArrayList<CreateConversation>
+        ,host:String
     ) = viewModelScope.launch {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 list.clear()
-                val post = dataSnapshot!!.child("user").children
-                post.forEach {
-                    val children = dataSnapshot!!.child("user").child(it.key.toString()).children
-
-                    list.add(
-                        CreateConversation(
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("id").value.toString(),
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("fullName").value.toString(),
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("linkphoto").value.toString()
-                        )
-                    )
+                val Friend= dataSnapshot!!.child("fiend").child(host).child("allId").getValue().toString()
+                Friend.split(",").forEach {
+                  if(!dataSnapshot!!.child("user").child(it.toString())
+                          .child("id").value.toString().equals("null") ) {
+                      list.add(
+                          CreateConversation(
+                              dataSnapshot!!.child("user").child(it.toString())
+                                  .child("id").value.toString(),
+                              dataSnapshot!!.child("user").child(it.toString())
+                                  .child("fullName").value.toString(),
+                              dataSnapshot!!.child("user").child(it.toString())
+                                  .child("linkPhoto").value.toString()
+                          )
+                      )
+                  }
 
                 }
                 _response.value = list
@@ -66,24 +69,25 @@ class CreateConversationViewModel : ViewModel() {
         _select.postValue(list)
     }
 
-    fun saveIF(database: DatabaseReference, id: String, message: Message) {
+    fun saveIF(database: DatabaseReference, id: String, message: Chat) {
         database.child("conversation").child(id).setValue(message)
     }
 
-    fun check(database: DatabaseReference, id: String, message: Message)= viewModelScope.launch  {
+    fun check(database: DatabaseReference, id: String, message: Chat)= viewModelScope.launch  {
+        var k=1
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                val post = dataSnapshot!!.child("message").children
+                val post = dataSnapshot!!.child("conversation").children
 
-                if(dataSnapshot!!.child("message").getValue()==null){
-                    saveIF(database,id,message)
-                }
                 post.forEach {
-                    Log.d(TAG, "onDataChange: "+id)
-                  if(dataSnapshot!!.child("user").getValue()!=id)
-                      saveIF(database,id,message)
-
+                    if(commomFunction.compare(it.key.toString(),id)) {
+                        k = 0
+                        Log.d(TAG, "onDataChange123: "+it.key.toString()+" () "+id)
+                    }
+                }
+                if(k==1){
+                    saveIF(database,id,message)
                 }
 
 

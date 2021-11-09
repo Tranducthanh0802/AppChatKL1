@@ -7,6 +7,7 @@ class User(
     var data: String = "",
     var phoneNumber: String = "",
     var section: String = "",
-    var isFriend: Boolean = false
+    var isFriend: Boolean = false,
+    var date:String=""
 ) {
 }

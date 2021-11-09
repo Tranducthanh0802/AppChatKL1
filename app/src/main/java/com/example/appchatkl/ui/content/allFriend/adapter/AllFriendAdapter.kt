@@ -10,7 +10,7 @@ import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.AllFriendLayoutAdapterBinding
 
 
-class AllFriendAdapter : RecyclerView.Adapter<AllFriendAdapter.MyViewHolder>() {
+class AllFriendAdapter(val addFriend: AddFriend) : RecyclerView.Adapter<AllFriendAdapter.MyViewHolder>() {
 
 
     inner class MyViewHolder(val binding: AllFriendLayoutAdapterBinding) :
@@ -58,6 +58,10 @@ class AllFriendAdapter : RecyclerView.Adapter<AllFriendAdapter.MyViewHolder>() {
             if (i < listConversation.size && currentTvShow.fullName.substring(0,1).equals(listConversation.get(i).fullName.substring(0,1))){
                 holder.binding.mSection.visibility =View.GONE
             }
+        }
+        holder.binding.ketban.setOnClickListener{
+            addFriend.onclick(currentTvShow.id)
+           // currentTvShow.isFriend=true
         }
 
 

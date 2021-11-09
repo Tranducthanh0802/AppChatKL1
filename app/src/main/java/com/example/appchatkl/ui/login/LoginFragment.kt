@@ -2,12 +2,14 @@ package com.example.appchatkl.ui.login
 
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.appchatkl.R
 import com.example.appchatkl.databinding.LoginFragmentBinding
@@ -18,6 +20,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class LoginFragment : Fragment() {
+    val TAG="LoginFragment"
+    private lateinit var controller:NavController
     companion object {
         fun newInstance() = FriendFragment()
     }
@@ -34,7 +38,7 @@ class LoginFragment : Fragment() {
 
         val loginViewModel:LoginViewModel =ViewModelProvider(this).get(LoginViewModel::class.java)
         binding.login = loginViewModel
-        val controller=findNavController()
+         controller=findNavController()
         binding.txtRegister.setOnClickListener{
             controller.navigate(R.id.registerFragment2)
         }
@@ -43,6 +47,7 @@ class LoginFragment : Fragment() {
 
         }
         loginViewModel.isCheck.observe(viewLifecycleOwner,{
+            Log.d(TAG, "onCreateView: "+it)
             if(it){
                 controller.navigate(R.id.bottomFragment)
             }
@@ -60,6 +65,7 @@ class LoginFragment : Fragment() {
         if (currentUser != null) {
             val emailVerified: Boolean = currentUser.isEmailVerified();
             val uid = currentUser.uid
+            controller.navigate(R.id.bottomFragment)
         }
     }
 

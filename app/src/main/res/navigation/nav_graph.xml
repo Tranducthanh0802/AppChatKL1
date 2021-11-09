@@ -23,7 +23,24 @@
     <fragment
         android:id="@+id/bottomFragment"
         android:name="com.example.appchatkl.ui.content.BottomFragment"
-        android:label="BottomFragment" />
+        android:label="BottomFragment" >
+        <action
+            android:id="@+id/action_bottomFragment_to_createConversationFragment"
+            app:destination="@id/createConversationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createConversationFragment"
+        android:name="com.example.appchatkl.ui.content.createConversation.CreateConversationFragment"
+        android:label="create_conversation_fragment"
+        tools:layout="@layout/create_conversation_fragment" >
+        <action
+            android:id="@+id/action_createConversationFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.appchatkl.ui.content.chat.ChatFragment"
+        android:label="ChatFragment" />
 
 
 </navigation>

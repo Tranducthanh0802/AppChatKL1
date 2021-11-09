@@ -2,16 +2,17 @@ package com.example.appchatkl.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.ListFragment
 import com.example.appchatkl.R
 import com.example.appchatkl.databinding.ActivityMainBinding
-import com.example.appchatkl.ui.content.BottomFragment
-import com.example.appchatkl.ui.content.allFriend.AllFriendFragment
+import com.example.appchatkl.ui.content.chat.ChatFragment
 import com.example.appchatkl.ui.content.listMessage.ListMessageFragment
-import com.example.appchatkl.ui.content.requestFriend.requestFriendFragment
-import com.example.appchatkl.ui.login.LoginFragment
+import com.example.appchatkl.ui.content.listMessage.adapter.SendData
+import com.example.appchatkl.ui.content.user.Find
 
-open class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity(),SendData {
 
     val TAG="MainActivity"
 
@@ -31,6 +32,20 @@ open class MainActivity : AppCompatActivity() {
     override open fun onBackPressed() {
         super.onBackPressed()
     }
+
+    override fun send(s: String) {
+        val bundle=Bundle()
+        bundle.putString("id",s)
+        val chatFragment=ChatFragment()
+        chatFragment.arguments=bundle
+        val transaction = this.supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.framentActivity, chatFragment)
+        transaction.addToBackStack("list")
+        transaction.commit()
+    }
+
+
+
 
 
 }

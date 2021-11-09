@@ -36,6 +36,7 @@ class LoginViewModel  () : ViewModel() {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("abc", "signInWithEmail:success")
                         val user = auth.currentUser
+                        _isCheck.value=true
 
                     } else {
                         // If sign in fails, display a message to the user.

@@ -1,5 +1,6 @@
 package com.example.appchatkl.ui.content.friend.friend
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,32 +14,38 @@ import kotlinx.coroutines.launch
 
 class FriendViewModel : ViewModel() {
     // TODO: Implement the ViewModel
+    val TAG="FriendViewModel"
     private val _response = MutableLiveData<List<User>>()
     val responseTvShow: LiveData<List<User>>
         get() = _response
 
     fun getAllUser(
         postReference: DatabaseReference,
-        list: ArrayList<User>
+        list: ArrayList<User>,
+        host:String
     ) = viewModelScope.launch {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 list.clear()
-                val post = dataSnapshot!!.child("user").children
-                post.forEach {
-                    list.add(
-                        User(
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("id").value.toString(),
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("fullName").value.toString(),
-                            dataSnapshot!!.child("user").child(it.key.toString())
-                                .child("linkPhoto").value.toString()
-                        )
-                    )
+                val Friend= dataSnapshot!!.child("fiend").child(host).child("allId").getValue()
 
+                analyst(Friend.toString()).forEach {
+                    if (!it.equals(host) && !dataSnapshot!!.child("user").child(it.toString())
+                            .child("id").value.toString().equals("null")) {
+                        list.add(
+                            User(
+                                dataSnapshot!!.child("user").child(it.toString())
+                                    .child("id").value.toString(),
+                                dataSnapshot!!.child("user").child(it.toString())
+                                    .child("fullName").value.toString(),
+                                dataSnapshot!!.child("user").child(it.toString())
+                                    .child("linkPhoto").value.toString()
+                            )
+                        )
+                    }
                 }
+
                 _response.value = list
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -49,4 +56,7 @@ class FriendViewModel : ViewModel() {
         postReference.addValueEventListener(postListener)
 
     }
+        fun analyst(s:String):List<String>{
+            return s.split(",").toList()
+        }
 }

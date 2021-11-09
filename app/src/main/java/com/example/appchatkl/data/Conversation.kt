@@ -3,7 +3,13 @@ package com.example.appchatkl.data
 class Conversation(
     var message: Message,
     var name:String="",
-    val notification: String=""
+    var notification: String="",
+    var isNotificat:Boolean=false,
+    var count:String="",
+    var id:String="",
+    var idSee:String="",
+    var listMessage: ArrayList<String> =ArrayList<String>(),
+    var isFind:Boolean=false
 ) {
     init{
         var s=""

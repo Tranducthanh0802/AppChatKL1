@@ -20,6 +20,18 @@ class RequestFriendViewModel : ViewModel() {
     private var _request=MutableLiveData<List<User>>()
     val request:LiveData<List<User>>
     get() = _request
+    private var _idSendRequest=MutableLiveData<String>()
+    val idSendReQuest: LiveData<String>
+        get() = _idSendRequest
+    private var _idReciveRequest=MutableLiveData<String>()
+    val idReceiveReQuest: LiveData<String>
+        get() = _idReciveRequest
+
+  private var _friend=MutableLiveData<String>()
+    val friend: LiveData<String>
+        get() = _friend
+
+
 
     fun getInvitationAndRequest(postReference: DatabaseReference,
                       listInvitation: ArrayList<User>,listRequest: ArrayList<User>,host:String
@@ -34,13 +46,18 @@ class RequestFriendViewModel : ViewModel() {
                 listRequest.clear()
                 val post = dataSnapshot!!.child("request").children
                 post.forEach {
-                    if(it.key.toString().equals(host)){
-                        val invitation = dataSnapshot!!.child("request").child(host).child("receiveRequest").getValue()
-                        val request = dataSnapshot!!.child("request").child(host).child("sendRequest").getValue()
-                        val currentInv= analysis(invitation as String)
-                        val currentRequest= analysis(request as String)
+                    if(it.key.toString().equals(host) && !it.key.toString().equals("null")){
+                        val invitation1 = dataSnapshot!!.child("request").child(host).child("receiveRequest").getValue()
+                        val request1 = dataSnapshot!!.child("request").child(host).child("sendRequest").getValue()
+                        _friend.value=dataSnapshot!!.child("fiend").child(host).child("allId").getValue().toString()
+                        _idReciveRequest.value= request1.toString()
+                        _idSendRequest.value=invitation1.toString()
+                        val currentInv= analysis(invitation1 as String)
+                        val currentRequest= analysis(request1 as String)
 
                         currentInv.forEach {
+                            if(! dataSnapshot!!.child("user").child(it.toString())
+                                    .child("fullName").value.toString().equals("null"))
                             listInvitation.add(
                                 User(
                                     dataSnapshot!!.child("user").child(it.toString())
@@ -51,9 +68,10 @@ class RequestFriendViewModel : ViewModel() {
                                         .child("linkPhoto").value.toString()
                                 )
                             )
-                            Log.d(TAG, "onDataChange: "+listInvitation.get(0).fullName)
                         }
                         currentRequest.forEach {
+                            if(!dataSnapshot!!.child("user").child(it.toString())
+                                    .child("id").value.toString().equals("null"))
                             listRequest.add(
                                 User(
                                     dataSnapshot!!.child("user").child(it.toString())
@@ -86,5 +104,14 @@ class RequestFriendViewModel : ViewModel() {
         val current = post.split(",").toList()
 
         return current
+    }
+     fun delete(s:String,id:String):String{
+        var a=""
+            s.split(",").forEach {
+                if(!it.equals(id) && !it.equals("")){
+                    a+=it+","
+                }
+            }
+        return a
     }
 }

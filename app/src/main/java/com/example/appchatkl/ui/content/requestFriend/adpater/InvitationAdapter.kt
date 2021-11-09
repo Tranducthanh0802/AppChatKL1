@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.InvitationLayoutAdapterBinding
 
-class InvitationAdapter  : RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
+class InvitationAdapter(val decision: Decision)  : RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
 
 
     inner class MyViewHolder(val binding: InvitationLayoutAdapterBinding) :
@@ -51,7 +51,9 @@ class InvitationAdapter  : RecyclerView.Adapter<InvitationAdapter.MyViewHolder>(
         holder.binding.apply {
             user=currentTvShow
         }
-
+        holder.binding.dongy.setOnClickListener{
+            decision.onClickYes(currentTvShow.id)
+        }
     }
 
     override fun getItemCount() = listConversation.size
