@@ -37,21 +37,23 @@ import java.io.File
 
 
 class EditIfFragment : Fragment() {
-    var id=""
-    val TAG="EditIfFragment"
+    var id = ""
+    val TAG = "EditIfFragment"
     lateinit var database: DatabaseReference
     lateinit var binding: FragmentEditIfBinding
     private lateinit var viewModel: UserViewModel
-    var user= User()
-    val REQUEST_CODE=123
+    var user = User()
+    val REQUEST_CODE = 123
+
     companion object {
         fun newInstance() = EditIfFragment()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_if, container, false
         )
@@ -62,29 +64,29 @@ class EditIfFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        binding.user=user
+        binding.user = user
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-        id= commomFunction.getId(currentUser!!).toString()
+        id = commomFunction.getId(currentUser!!).toString()
         database = Firebase.database.reference
-        viewModel.getIF(database,id)
-        viewModel.user.observe(viewLifecycleOwner,{
-            binding.user=it
-            user=it
-            user.linkPhoto=it.linkPhoto
+        viewModel.getIF(database, id)
+        viewModel.user.observe(viewLifecycleOwner, {
+            binding.user = it
+            user = it
+            user.linkPhoto = it.linkPhoto
         })
-        binding.txtSave.setOnClickListener{
-            user.fullName=binding.edtFN.text.toString()
-            user.phoneNumber=binding.edtPN.text.toString()
-            user.date=binding.edtDate.text.toString()
-            user.id=id
-           database.child("user").child(id).setValue(user)
+        binding.txtSave.setOnClickListener {
+            user.fullName = binding.edtFN.text.toString()
+            user.phoneNumber = binding.edtPN.text.toString()
+            user.date = binding.edtDate.text.toString()
+            user.id = id
+            database.child("user").child(id).setValue(user)
         }
-        binding.camera.setOnClickListener{
+        binding.camera.setOnClickListener {
             requestPermission(requireContext())
             openGalleryForImage()
         }
-        binding.btnBack.setOnClickListener{
+        binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
@@ -98,39 +100,43 @@ class EditIfFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             //imageView.setImageURI(data?.data) // handle chosen image
 
             val storage = Firebase.storage
             val file: Uri = data?.data!!
-            var storageRef = FirebaseStorage.getInstance().getReference(""+ System.currentTimeMillis())
+            var storageRef =
+                FirebaseStorage.getInstance().getReference("" + System.currentTimeMillis())
 
-           storageRef.putFile(file).addOnSuccessListener {
+            storageRef.putFile(file).addOnSuccessListener {
 
                 storageRef.downloadUrl.addOnSuccessListener {
-                   user.linkPhoto=""+it
-                    binding.user=user
-                   // database.child("user").child(id).child("linkPhoto").setValue(""+it)
+                    user.linkPhoto = "" + it
+                    binding.user = user
+                    // database.child("user").child(id).child("linkPhoto").setValue(""+it)
                 }
 
             }
 
         }
     }
-    fun CheckPermission(context:Context):Boolean {
-        return ActivityCompat.checkSelfPermission(context,Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
+
+    fun CheckPermission(context: Context): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
-    fun requestPermission(context: Context){
-        var permission= mutableListOf<String>()
-        if(!CheckPermission(context)){
+
+    fun requestPermission(context: Context) {
+        var permission = mutableListOf<String>()
+        if (!CheckPermission(context)) {
             permission.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
-        if(permission.isNotEmpty()){
-            ActivityCompat.requestPermissions(context as Activity,permission.toTypedArray(),0)
+        if (permission.isNotEmpty()) {
+            ActivityCompat.requestPermissions(context as Activity, permission.toTypedArray(), 0)
         }
     }
-
-
 
 
 }

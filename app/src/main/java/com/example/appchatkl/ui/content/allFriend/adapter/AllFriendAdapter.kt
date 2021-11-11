@@ -10,11 +10,12 @@ import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.AllFriendLayoutAdapterBinding
 
 
-class AllFriendAdapter(val addFriend: AddFriend) : RecyclerView.Adapter<AllFriendAdapter.MyViewHolder>() {
+class AllFriendAdapter(val addFriend: AddFriend) :
+    RecyclerView.Adapter<AllFriendAdapter.MyViewHolder>() {
 
 
     inner class MyViewHolder(val binding: AllFriendLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
@@ -48,20 +49,22 @@ class AllFriendAdapter(val addFriend: AddFriend) : RecyclerView.Adapter<AllFrien
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         val currentTvShow: User = listConversation[position]
-        currentTvShow.section=currentTvShow.fullName.toString().substring(0,1)
+        currentTvShow.section = currentTvShow.fullName.toString().substring(0, 1)
         holder.binding.apply {
-            user=currentTvShow
+            user = currentTvShow
 
         }
-        if(position > 0){
+        if (position > 0) {
             val i = position - 1;
-            if (i < listConversation.size && currentTvShow.fullName.substring(0,1).equals(listConversation.get(i).fullName.substring(0,1))){
-                holder.binding.mSection.visibility =View.GONE
+            if (i < listConversation.size && currentTvShow.fullName.substring(0, 1)
+                    .equals(listConversation.get(i).fullName.substring(0, 1))
+            ) {
+                holder.binding.mSection.visibility = View.GONE
             }
         }
-        holder.binding.ketban.setOnClickListener{
+        holder.binding.ketban.setOnClickListener {
             addFriend.onclick(currentTvShow.id)
-           // currentTvShow.isFriend=true
+            // currentTvShow.isFriend=true
         }
 
 

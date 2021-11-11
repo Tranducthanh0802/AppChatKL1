@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appchatkl.data.CreateConversation
 import com.example.appchatkl.data.Message
+import com.example.appchatkl.data.db.AppDatabase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -34,7 +35,8 @@ class ChatViewModel : ViewModel() {
     fun takeMessage(
         id: String,
         postReference: DatabaseReference,
-        listMS: ArrayList<Message>, host: String
+        listMS: ArrayList<Message>, host: String,
+        chatDB: AppDatabase
     ) = viewModelScope.launch {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -73,6 +75,14 @@ class ChatViewModel : ViewModel() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Getting Post failed, log a message
+                chatDB.chatDao().loadConversation().forEach {
+                    if (id.equals(it.idTeam)) {
+                        name.value = it.nameNhom
+                        avata.value = it.linkPhotoTeam
+                        CreateGroupOff(it.idTeam, listMS, host, chatDB)
+                    }
+
+                }
 
             }
         }
@@ -80,7 +90,34 @@ class ChatViewModel : ViewModel() {
 
     }
 
-    fun Send(s: String, postReference: DatabaseReference, id: String, host: String) {
+    fun takeMessageOff(
+        id: String,
+        listMS: ArrayList<Message>, host: String,
+        chatDB: AppDatabase
+    ) = viewModelScope.launch {
+        // Get Post object and use the values to update the UI
+
+        var na = ""
+        var link = ""
+        var comma = ""
+
+        chatDB.chatDao().loadConversation().forEach {
+            if (id.equals(it.idTeam)) {
+                name.value = it.nameNhom
+                avata.value = it.linkPhotoTeam
+                CreateGroupOff(it.mesage, listMS, host, chatDB)
+            }
+
+        }
+    }
+
+    fun Send(
+        s: String,
+        postReference: DatabaseReference,
+        id: String,
+        host: String,
+        chatDB: AppDatabase
+    ) {
         var k = 0
         Log.d(TAG, "Send: " + host)
         postReference.child(Conversation).child(id).child("id").setValue(host)
@@ -108,7 +145,12 @@ class ChatViewModel : ViewModel() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Getting Post failed, log a message
-
+                chatDB.chatDao().loadConversation().forEach {
+                    if (id.equals(it.idTeam)) {
+                        message.value = it.mesage
+                        count.value = it.count.toInt()
+                    }
+                }
             }
         }
         postReference.addValueEventListener(postListener)
@@ -133,6 +175,7 @@ class ChatViewModel : ViewModel() {
         if (listMessage.isNotEmpty()) {
             max.value = listMessage.size
         }
+        Log.d(TAG, "CreateGroup: ádfdsafsaf")
         var time: String
         var id: String
         var message: String
@@ -170,8 +213,62 @@ class ChatViewModel : ViewModel() {
                     _list.value = listMS
                 }.addOnFailureListener {
 
-                Log.e("firebase", "Error getting data", it)
+                    Log.e("firebase", "Error getting data", it)
+                }
+        }
+//            Log.d(TAG, "CreateGroup65: "+listMS.get(0).avata)
+//            _list.value = listMS
+    }
+
+    private fun CreateGroupOff(
+        post: String,
+        listMS: ArrayList<Message>,
+        host: String,
+        chatDB: AppDatabase
+    ) {
+        val listMessage = post.split("@@@@@").toList()
+        if (listMessage.isNotEmpty()) {
+            max.value = listMessage.size
+        }
+        Log.d(TAG, "CreateGroup: ádfdsafsaf" + listMessage)
+        var time: String
+        var id: String
+        var message: String
+        var avata: String = ""
+        listMessage.forEach {
+            var right: Boolean = false
+            time = TakeTime(it)
+            id = TakeID(it)
+            if (LeftOrRight(id, host)) right = true
+            message = TakeMessage(it)
+            if (!message.equals("")) {
+                listMS.add(Message(message, id, time, isRight = right, avata = avata))
             }
+        }
+        var k = 0
+        listMS.forEach {
+            if (it.id != host && k == 0) {
+                it.isShowAvata = true
+                k = 1
+            } else {
+                k = 0
+            }
+
+        }
+        for (i in 0..listMS.size) {
+            if (i + 1 == listMS.size || listMS.get(i).id != listMS.get(i + 1).id) {
+                listMS.get(i).isShowTime = true
+                if (i + 1 == listMS.size) break
+            }
+        }
+        for (i in 0..listMS.size - 1) {
+            chatDB.chatDao().loadUser().forEach {
+                if (listMS.get(i).equals(it.id)) {
+                    listMS.get(i).avata = it.linkPhoto
+                }
+            }
+            _list.value = listMS
+
         }
 //            Log.d(TAG, "CreateGroup65: "+listMS.get(0).avata)
 //            _list.value = listMS

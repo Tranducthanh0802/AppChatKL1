@@ -12,18 +12,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
-class LoginViewModel  () : ViewModel() {
-   var _email=MutableLiveData<String>()
-   var _passWord= MutableLiveData<String>()
-    private var _isCheck=MutableLiveData<Boolean>()
-    val isCheck:LiveData<Boolean> get() = _isCheck
-    val isNotification=MutableLiveData<String>()
+class LoginViewModel() : ViewModel() {
+    var _email = MutableLiveData<String>()
+    var _passWord = MutableLiveData<String>()
+    private var _isCheck = MutableLiveData<Boolean>()
+    val isCheck: LiveData<Boolean> get() = _isCheck
+    val isNotification = MutableLiveData<String>()
 
 
     // var accountLiveData =MutableLiveData<Account>()
 
     fun onLogin() {
-        Log.d("abc", "signInWithEmail:success"+_email.value.toString())
+        Log.d("abc", "signInWithEmail:success" + _email.value.toString())
         val account = Account(_email.value.toString(), _passWord.value.toString())
         // accountLiveData.value= Account(email.value.toString(),password.value.toString())
         if (account.isValidEmail() == true
@@ -36,11 +36,11 @@ class LoginViewModel  () : ViewModel() {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("abc", "signInWithEmail:success")
                         val user = auth.currentUser
-                        _isCheck.value=true
+                        _isCheck.value = true
 
                     } else {
                         // If sign in fails, display a message to the user.
-                            isNotification.value="Login failure"
+                        isNotification.value = "Login failure"
                         Log.w("abc", "signInWithEmail:failure", task.exception)
 
                     }

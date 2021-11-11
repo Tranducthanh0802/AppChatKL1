@@ -10,24 +10,24 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appchatkl.data.Conversation
 import com.example.appchatkl.databinding.ConversationLayoutAdapterBinding
+import com.example.appchatkl.ui.content.createConversation.adapter.onclick
 
 
-class ConversationAdapter(val open :onClick)  : RecyclerView.Adapter<ConversationAdapter.MyViewHolder>(),
+class ConversationAdapter(val open: onClick) :
+    RecyclerView.Adapter<ConversationAdapter.MyViewHolder>(),
     Filterable {
-   //  lateinit var list : ArrayList<Conversation>
-    val TAG="ConversationAdapter"
-    inner class MyViewHolder(val binding: ConversationLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+    //  lateinit var list : ArrayList<Conversation>
+    val TAG = "ConversationAdapter"
 
-        }
-    var countryFilterList : List<Conversation>
-    get() = differ.currentList
-    set(value) {
-        differ.submitList(value)
+    inner class MyViewHolder(val binding: ConversationLayoutAdapterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
     }
 
-    fun get(){
-        countryFilterList= listConversation
+    var countryFilterList = ArrayList<Conversation>()
+
+    fun get() {
+        countryFilterList = listConversation
     }
 
 
@@ -42,11 +42,7 @@ class ConversationAdapter(val open :onClick)  : RecyclerView.Adapter<Conversatio
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-    var listConversation: List<Conversation>
-        get() = differ.currentList
-        set(value) {
-            differ.submitList(value)
-        }
+    var listConversation = ArrayList<Conversation>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -57,11 +53,11 @@ class ConversationAdapter(val open :onClick)  : RecyclerView.Adapter<Conversatio
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val currentTvShow:Conversation = listConversation[position]
+        val currentTvShow: Conversation = listConversation[position]
         holder.binding.apply {
-            conversation=currentTvShow
+            conversation = currentTvShow
         }
-        holder.binding.Linear.setOnClickListener{
+        holder.binding.Linear.setOnClickListener {
             open.openChat(currentTvShow.message.id)
         }
     }
@@ -71,38 +67,45 @@ class ConversationAdapter(val open :onClick)  : RecyclerView.Adapter<Conversatio
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
+                var resultList = ArrayList<Conversation>()
+                Log.d(TAG, "performFiltering: " + charSearch + countryFilterList.size)
                 if (charSearch.isEmpty()) {
-                    countryFilterList = listConversation as ArrayList<Conversation>
-                    Log.d(TAG, "performFiltering12: "+listConversation.size)
+                    countryFilterList.forEach {
+                        it.isFind = false
+                    }
+                    Log.d(TAG, "performFiltering: 12")
+                    resultList = countryFilterList
                 } else {
-                    var resultList = ArrayList<Conversation>()
-                    Log.d(TAG, "performFiltering123: "+countryFilterList.size)
                     for (row in countryFilterList) {
-                        var count=0
-                        row.listMessage.forEach{
-                            if (it.lowercase().contains(constraint.toString().lowercase())){
-                                count+=1
-                                Log.d(TAG, "performFiltering: "+count)
-                            }
-                            Log.d(TAG, "performFiltering: "+it)
-                        }
-                        if (count>0) {
-                            row.notification=count.toString()+"tin nhắn phù hợp"
-                            row.isNotificat=true
-                            row.isFind=true
 
+                        var count = 0
+                        row.listMessage.forEach {
+                            if (it.lowercase().contains(
+                                    constraint.toString().lowercase()
+                                ) && !constraint.toString().equals("null")
+                            ) {
+                                count += 1
+                            }
+                        }
+                        if (count > 0 && constraint?.length!! > 0) {
+                            row.notification = count.toString() + " tin nhắn phù hợp"
+                            row.isFind = true
                             resultList.add(row)
+                        } else {
+                            row.isFind = false
+
                         }
                     }
-                    countryFilterList = resultList
+
                 }
+
                 val filterResults = FilterResults()
-                filterResults.values = countryFilterList
+                filterResults.values = resultList
                 return filterResults
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                countryFilterList = results?.values as List<Conversation>
+                listConversation = results?.values as ArrayList<Conversation>
                 notifyDataSetChanged()
             }
         }

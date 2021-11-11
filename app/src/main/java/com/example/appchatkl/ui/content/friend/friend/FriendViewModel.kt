@@ -6,33 +6,43 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appchatkl.data.User
+import com.example.appchatkl.data.db.AppDatabase
+import com.example.appchatkl.data.db.Data.Conversations
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class FriendViewModel : ViewModel() {
     // TODO: Implement the ViewModel
-    val TAG="FriendViewModel"
+    val TAG = "FriendViewModel"
     private val _response = MutableLiveData<List<User>>()
     val responseTvShow: LiveData<List<User>>
         get() = _response
+    private val job = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + job)
 
     fun getAllUser(
         postReference: DatabaseReference,
         list: ArrayList<User>,
-        host:String
+        host: String,
+        chatDB: AppDatabase
     ) = viewModelScope.launch {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 list.clear()
-                val Friend= dataSnapshot!!.child("fiend").child(host).child("allId").getValue()
+                val Friend = dataSnapshot!!.child("fiend").child(host).child("allId").getValue()
 
                 analyst(Friend.toString()).forEach {
                     if (!it.equals(host) && !dataSnapshot!!.child("user").child(it.toString())
-                            .child("id").value.toString().equals("null")) {
+                            .child("id").value.toString().equals("null")
+                    ) {
                         list.add(
                             User(
                                 dataSnapshot!!.child("user").child(it.toString())
@@ -43,20 +53,67 @@ class FriendViewModel : ViewModel() {
                                     .child("linkPhoto").value.toString()
                             )
                         )
+                        uiScope.launch {
+                            chatDB.chatDao().insertUser(
+                                User(
+                                    id = dataSnapshot!!.child("user").child(it.toString())
+                                        .child("id").value.toString(),
+                                    fullName = dataSnapshot!!.child("user").child(it.toString())
+                                        .child("fullName").value.toString(),
+                                    linkPhoto = dataSnapshot!!.child("user").child(it.toString())
+                                        .child("linkPhoto").value.toString()
+                                )
+                            )
+                        }
                     }
                 }
 
                 _response.value = list
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 // Getting Post failed, log a message
+                chatDB.chatDao().loadUser().forEach {
+                    list.add(
+                        User(
+                            it.id,
+                            it.fullName,
+                            it.linkPhoto
+                        )
+                    )
+                }
+                _response.value = list
 
             }
         }
         postReference.addValueEventListener(postListener)
 
     }
-        fun analyst(s:String):List<String>{
-            return s.split(",").toList()
+
+    fun getAllUserOff(
+        list: ArrayList<User>,
+        host: String,
+        chatDB: AppDatabase
+    ) = viewModelScope.launch {
+
+        chatDB.chatDao().loadUser().forEach {
+            list.add(
+                User(
+                    it.id,
+                    it.fullName,
+                    it.linkPhoto
+                )
+            )
+            Log.d(TAG, "getAllUserOff: " + it.fullName)
         }
+        Log.d(TAG, "getAllUserOff: " + chatDB.chatDao().loadUser().size)
+        _response.value = list
+
+
+    }
+
+
+    fun analyst(s: String): List<String> {
+        return s.split(",").toList()
+    }
 }

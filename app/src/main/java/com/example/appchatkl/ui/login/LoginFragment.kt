@@ -12,6 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.appchatkl.R
+import com.example.appchatkl.commomFunction
+import com.example.appchatkl.data.db.AppDatabase
+import com.example.appchatkl.data.db.ChatDao
+import com.example.appchatkl.data.db.Data.Save
 import com.example.appchatkl.databinding.LoginFragmentBinding
 import com.example.appchatkl.ui.MainActivity
 import com.example.appchatkl.ui.content.friend.friend.FriendFragment
@@ -20,11 +24,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class LoginFragment : Fragment() {
-    val TAG="LoginFragment"
-    private lateinit var controller:NavController
+    val TAG = "LoginFragment"
+    private lateinit var controller: NavController
+    lateinit var chatDB: AppDatabase
+
     companion object {
         fun newInstance() = FriendFragment()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,20 +42,20 @@ class LoginFragment : Fragment() {
         )
         var view: View = binding.root
         binding.lifecycleOwner = this
-
-        val loginViewModel:LoginViewModel =ViewModelProvider(this).get(LoginViewModel::class.java)
+        chatDB = AppDatabase.getDatabase(view.context)
+        val loginViewModel: LoginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         binding.login = loginViewModel
-         controller=findNavController()
-        binding.txtRegister.setOnClickListener{
+        controller = findNavController()
+        binding.txtRegister.setOnClickListener {
             controller.navigate(R.id.registerFragment2)
         }
-        binding.btnDn.setOnClickListener{
+        binding.btnDn.setOnClickListener {
             loginViewModel.onLogin()
 
         }
-        loginViewModel.isCheck.observe(viewLifecycleOwner,{
-            Log.d(TAG, "onCreateView: "+it)
-            if(it){
+        loginViewModel.isCheck.observe(viewLifecycleOwner, {
+            Log.d(TAG, "onCreateView: " + it)
+            if (it) {
                 controller.navigate(R.id.bottomFragment)
             }
         })
@@ -65,8 +72,16 @@ class LoginFragment : Fragment() {
         if (currentUser != null) {
             val emailVerified: Boolean = currentUser.isEmailVerified();
             val uid = currentUser.uid
+            chatDB.chatDao().insertSave(Save(uid))
             controller.navigate(R.id.bottomFragment)
+        } else {
+            chatDB.chatDao().loadSave().forEach {
+                if (!it.id.equals("null")) {
+                    controller.navigate(R.id.bottomFragment)
+                }
+            }
         }
+
     }
 
 }

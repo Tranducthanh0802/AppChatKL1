@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appchatkl.data.User
 import com.example.appchatkl.databinding.InvitationLayoutAdapterBinding
 
-class InvitationAdapter(val decision: Decision)  : RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
+class InvitationAdapter(val decision: Decision) :
+    RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
 
 
     inner class MyViewHolder(val binding: InvitationLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
@@ -49,9 +50,9 @@ class InvitationAdapter(val decision: Decision)  : RecyclerView.Adapter<Invitati
         val currentTvShow: User = listConversation[position]
 
         holder.binding.apply {
-            user=currentTvShow
+            user = currentTvShow
         }
-        holder.binding.dongy.setOnClickListener{
+        holder.binding.dongy.setOnClickListener {
             decision.onClickYes(currentTvShow.id)
         }
     }

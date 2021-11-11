@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.example.appchatkl.R
 import com.example.appchatkl.commomFunction
 import com.example.appchatkl.data.User
+import com.example.appchatkl.data.db.AppDatabase
 import com.example.appchatkl.databinding.UserFragmentBinding
 import com.example.appchatkl.ui.content.user.Edit.EditIfFragment
 import com.example.appchatkl.ui.login.LoginFragment
@@ -21,9 +22,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class UserFragment : Fragment() {
-    var id=""
+    var id = ""
     lateinit var database: DatabaseReference
-    lateinit var binding:UserFragmentBinding
+    lateinit var binding: UserFragmentBinding
+
     companion object {
         fun newInstance() = UserFragment()
     }
@@ -34,7 +36,7 @@ class UserFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.user_fragment, container, false
         )
@@ -44,23 +46,27 @@ class UserFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-        val user= User()
-        binding.user=user
+        val user = User()
+        val chatDB: AppDatabase = AppDatabase.getDatabase(binding.root.context)
+        binding.user = user
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-        id= commomFunction.getId(currentUser!!).toString()
+        id = commomFunction.getId(currentUser!!).toString()
+        binding.txtEmail.text=commomFunction.getEmail(currentUser!!)
         database = Firebase.database.reference
-        viewModel.getIF(database,id)
-        viewModel.user.observe(viewLifecycleOwner,{
-            binding.user=it
+        viewModel.getIF(database, id)
+        viewModel.user.observe(viewLifecycleOwner, {
+            binding.user = it
         })
-        binding.lineLogOut.setOnClickListener{
+        binding.lineLogOut.setOnClickListener {
             FirebaseAuth.getInstance().signOut();
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.framentActivity, LoginFragment.newInstance())
-            transaction.commit()
+//            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+//            transaction.replace(R.id.framentActivity, LoginFragment.newInstance())
+//            transaction.commit()
+            activity?.finish()
+            chatDB.chatDao().deleteSave()
         }
-        binding.edit.setOnClickListener{
+        binding.edit.setOnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.framentActivity, EditIfFragment.newInstance())
             transaction.addToBackStack("")

@@ -16,27 +16,33 @@ import com.example.appchatkl.databinding.SelectFriendLayoutAdapterBinding
 class SelectFriendAdapter : RecyclerView.Adapter<SelectFriendAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(val binding: SelectFriendLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
 
     private val diffCallback = object : DiffUtil.ItemCallback<CreateConversation>() {
-        override fun areItemsTheSame(oldItem: CreateConversation, newItem: CreateConversation): Boolean {
+        override fun areItemsTheSame(
+            oldItem: CreateConversation,
+            newItem: CreateConversation
+        ): Boolean {
             return oldItem.name.equals(newItem.name)
         }
 
-        override fun areContentsTheSame(oldItem: CreateConversation, newItem: CreateConversation): Boolean {
+        override fun areContentsTheSame(
+            oldItem: CreateConversation,
+            newItem: CreateConversation
+        ): Boolean {
             return newItem.equals(oldItem)
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
     var listConversation: List<CreateConversation>
-    get() = differ.currentList
-    set(value) {
-        differ.submitList(value)
-    }
+        get() = differ.currentList
+        set(value) {
+            differ.submitList(value)
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -49,7 +55,7 @@ class SelectFriendAdapter : RecyclerView.Adapter<SelectFriendAdapter.MyViewHolde
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentTvShow: CreateConversation = differ.currentList[position]
         holder.binding.apply {
-            create=currentTvShow
+            create = currentTvShow
         }
     }
 

@@ -14,11 +14,11 @@ import com.example.appchatkl.databinding.InvitationLayoutAdapterBinding
 import com.example.appchatkl.databinding.RequestLayoutAdapterBinding
 
 
-class RequestAdapter(val decision: Decision)  : RecyclerView.Adapter<RequestAdapter.MyViewHolder>() {
+class RequestAdapter(val decision: Decision) : RecyclerView.Adapter<RequestAdapter.MyViewHolder>() {
 
 
     inner class MyViewHolder(val binding: RequestLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
@@ -52,11 +52,11 @@ class RequestAdapter(val decision: Decision)  : RecyclerView.Adapter<RequestAdap
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         val currentTvShow: User = listConversation[position]
-        currentTvShow.section=currentTvShow.fullName.toString().substring(0,1)
+        currentTvShow.section = currentTvShow.fullName.toString().substring(0, 1)
         holder.binding.apply {
-            user=currentTvShow
+            user = currentTvShow
         }
-        holder.binding.huy.setOnClickListener{
+        holder.binding.huy.setOnClickListener {
             decision.onClikNo(currentTvShow.id)
         }
 

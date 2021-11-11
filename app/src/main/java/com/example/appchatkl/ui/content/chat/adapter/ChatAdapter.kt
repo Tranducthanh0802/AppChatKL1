@@ -19,8 +19,9 @@ private const val messageLeft = 1
 private const val messageRight = 2
 private const val imageLeft = 3
 private const val imageRight = 4
-private const val TAG="ChatAdapter"
-class ChatAdapter(val id:String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+private const val TAG = "ChatAdapter"
+
+class ChatAdapter(val id: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     private val diffCallback = object : DiffUtil.ItemCallback<Message>() {
@@ -41,47 +42,45 @@ class ChatAdapter(val id:String) : RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
 
     inner class MyViewHolder(val binding: ViewBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
-            fun bind( position:Int){
-                val currentTvShow: Message = listConversation[position]
-                if(binding is ItemMessageImageLeftBinding)
-                binding.message= currentTvShow
-                else if( binding is ItemMessageImageRightBinding)
-                    binding.message= currentTvShow
-                else if( binding is ItemMessageLeftBinding){
-                    binding.message= currentTvShow
-                    Log.d(TAG, "bind: "+currentTvShow.avata)
-                }
-                else if( binding is ItemMessageRightBinding)
-                    binding.message= currentTvShow
+        fun bind(position: Int) {
+            val currentTvShow: Message = listConversation[position]
+            if (binding is ItemMessageImageLeftBinding)
+                binding.message = currentTvShow
+            else if (binding is ItemMessageImageRightBinding)
+                binding.message = currentTvShow
+            else if (binding is ItemMessageLeftBinding) {
+                binding.message = currentTvShow
+                Log.d(TAG, "bind: " + currentTvShow.avata)
+            } else if (binding is ItemMessageRightBinding)
+                binding.message = currentTvShow
 
-            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        if(viewType== messageLeft) {
+        if (viewType == messageLeft) {
 
             return MyViewHolder(
                 ItemMessageLeftBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
-        }
-        else if(viewType == messageRight) {
+        } else if (viewType == messageRight) {
 
             return MyViewHolder(
                 ItemMessageRightBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
-        }else if(viewType == imageRight){
+        } else if (viewType == imageRight) {
             return MyViewHolder(
                 ItemMessageImageRightBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
-        }else {
+        } else {
             return MyViewHolder(
                 ItemMessageImageLeftBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
@@ -99,16 +98,15 @@ class ChatAdapter(val id:String) : RecyclerView.Adapter<RecyclerView.ViewHolder>
     override fun getItemCount() = listConversation.size
 
     override fun getItemViewType(position: Int): Int {
-        if(listConversation.get(position).id.equals(id)){
-            if(listConversation.get(position).isImage){
+        if (listConversation.get(position).id.equals(id)) {
+            if (listConversation.get(position).isImage) {
                 return imageRight;
-            }else return messageRight;
+            } else return messageRight;
 
-        }
-        else{
-            if(listConversation.get(position).isImage){
+        } else {
+            if (listConversation.get(position).isImage) {
                 return imageLeft;
-            }else  return messageLeft;
+            } else return messageLeft;
         }
     }
 

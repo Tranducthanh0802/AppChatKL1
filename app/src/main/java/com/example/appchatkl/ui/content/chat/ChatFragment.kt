@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.appchatkl.R
 import com.example.appchatkl.commomFunction
+import com.example.appchatkl.data.db.AppDatabase
 import com.example.appchatkl.databinding.ChatFragmentBinding
 import com.example.appchatkl.ui.content.BottomFragment
 import com.example.appchatkl.ui.content.chat.adapter.ChatAdapter
@@ -32,9 +33,10 @@ import kotlin.collections.ArrayList
 import kotlin.math.log
 
 class ChatFragment : Fragment() {
-    val TAG="ChatFragment"
-    private  var host=""
-    private lateinit var binding:ChatFragmentBinding
+    val TAG = "ChatFragment"
+    private var host = ""
+    private lateinit var binding: ChatFragmentBinding
+
 
     companion object {
         fun newInstance() = ChatFragment()
@@ -48,25 +50,35 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-         binding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.chat_fragment, container, false
         )
         return binding.root
     }
+
     var list = ArrayList<com.example.appchatkl.data.Message>()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
         viewModelLM = ViewModelProvider(this).get(ListMessageViewModel::class.java)
-
-        binding.chat= viewModel
-        val databse =Firebase.database.reference
+        val chatDB: AppDatabase = AppDatabase.getDatabase(binding.root.context)
+        binding.chat = viewModel
+        val databse = Firebase.database.reference
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-         host= commomFunction.getId(currentUser!!).toString()
+        if (currentUser != null) {
+            host = commomFunction.getId(currentUser!!).toString()
+        } else {
+            chatDB.chatDao().loadSave().forEach {
+                if (!it.id.equals("null")) {
+                    host = it.id
+                }
+            }
 
-        val adapterBinding=ChatAdapter(host)
+        }
+
+        val adapterBinding = ChatAdapter(host)
         binding.recyclerviewmessage.apply {
             adapter = adapterBinding
             layoutManager = LinearLayoutManager(
@@ -76,33 +88,39 @@ class ChatFragment : Fragment() {
 
         }
 
-        val id=arguments?.getString("id").toString()
-        databse.child("conversation").child(id).child("idSee").setValue(host)
+        val id = arguments?.getString("id").toString()
+        //   databse.child("conversation").child(id).child("idSee").setValue(host)
         adapterBinding.listConversation
-        viewModel.takeMessage(id,databse,list,host)
-        viewModel.list.observe(viewLifecycleOwner,{
-            adapterBinding.listConversation=it
+        if (commomFunction.checkConnect(requireContext())) {
+            viewModel.takeMessage(id, databse, list, host, chatDB)
+
+        } else {
+            viewModel.takeMessageOff(id, list, host, chatDB)
+        }
+        viewModel.takeMessage(id, databse, list, host, chatDB)
+        viewModel.list.observe(viewLifecycleOwner, {
+            adapterBinding.listConversation = it
 
             adapterBinding.notifyDataSetChanged()
 
         })
 
-        viewModel.max.observe(viewLifecycleOwner,{
+        viewModel.max.observe(viewLifecycleOwner, {
             binding.recyclerviewmessage.smoothScrollToPosition(
                 it
             )
         })
 
-        binding.back.setOnClickListener{
+        binding.back.setOnClickListener {
 
             requireActivity().supportFragmentManager.popBackStack()
 
         }
-        viewModel.name.observe(viewLifecycleOwner,{
-            binding.namefull.text=it
+        viewModel.name.observe(viewLifecycleOwner, {
+            binding.namefull.text = it
 
         })
-        viewModel.avata.observe(viewLifecycleOwner,{
+        viewModel.avata.observe(viewLifecycleOwner, {
             Glide.with(this).load(it).placeholder(R.drawable.personal1).into(binding.imgAvataTop);
         })
         binding.edtInput.addTextChangedListener(object : TextWatcher {
@@ -111,12 +129,13 @@ class ChatFragment : Fragment() {
                     viewModel.max.value!!
                 )
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 if (s == null) {
-                        binding.imgSend.visibility=View.GONE
+                    binding.imgSend.visibility = View.GONE
 
-                }else{
-                    binding.imgSend.visibility=View.VISIBLE
+                } else {
+                    binding.imgSend.visibility = View.VISIBLE
                 }
             }
 
@@ -124,16 +143,24 @@ class ChatFragment : Fragment() {
             }
         })
         binding.imgSend.setOnClickListener {
-            viewModel.Send(binding.edtInput.text.toString(),databse,viewModel.idName.value.toString(),host)
+            viewModel.Send(
+                binding.edtInput.text.toString(),
+                databse,
+                viewModel.idName.value.toString(),
+                host,
+                chatDB
+            )
         }
-        viewModel.message.observe(viewLifecycleOwner,{
+        viewModel.message.observe(viewLifecycleOwner, {
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
-            val s=it+"@@@"+host+"@@@@"+currentDate+"@@@@@"
-            databse.child("conversation").child(viewModel.idName.value.toString()).child("message").setValue(s)
+            val s = it + "@@@" + host + "@@@@" + currentDate + "@@@@@"
+            databse.child("conversation").child(viewModel.idName.value.toString()).child("message")
+                .setValue(s)
         })
-        viewModel.count.observe(viewLifecycleOwner,{
-            databse.child("conversation").child(viewModel.idName.value.toString()).child("count").setValue(it.toString())
+        viewModel.count.observe(viewLifecycleOwner, {
+            databse.child("conversation").child(viewModel.idName.value.toString()).child("count")
+                .setValue(it.toString())
         })
     }
 

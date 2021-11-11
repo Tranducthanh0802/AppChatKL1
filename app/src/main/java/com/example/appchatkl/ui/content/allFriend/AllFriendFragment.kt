@@ -23,11 +23,12 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class AllFriendFragment : Fragment(),AddFriend {
-    val TAG="AllFriendFragment"
+class AllFriendFragment : Fragment(), AddFriend {
+    val TAG = "AllFriendFragment"
     lateinit var binding: AllFriendFragmentBinding
     lateinit var database: DatabaseReference
-    lateinit var host:String
+    lateinit var host: String
+
     companion object {
         fun newInstance() = AllFriendFragment()
     }
@@ -38,7 +39,7 @@ class AllFriendFragment : Fragment(),AddFriend {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.all_friend_fragment, container, false
         )
@@ -53,9 +54,9 @@ class AllFriendFragment : Fragment(),AddFriend {
         var list = ArrayList<User>()
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-         host=commomFunction.getId(currentUser!!)
-        viewModel.getAllUser(database, list,host)
-        val friendAdapter= AllFriendAdapter(this)
+        host = commomFunction.getId(currentUser!!)
+        viewModel.getAllUser(database, list, host)
+        val friendAdapter = AllFriendAdapter(this)
         binding.stickyListFriend.apply {
             adapter = friendAdapter
             layoutManager = LinearLayoutManager(
@@ -64,7 +65,7 @@ class AllFriendFragment : Fragment(),AddFriend {
             )
             setHasFixedSize(true)
         }
-        viewModel.responseTvShow.observe(viewLifecycleOwner  ,{
+        viewModel.responseTvShow.observe(viewLifecycleOwner, {
             friendAdapter.listConversation = it
             binding.stickyListFriend.adapter?.notifyDataSetChanged()
         })
@@ -72,8 +73,15 @@ class AllFriendFragment : Fragment(),AddFriend {
     }
 
     override fun onclick(s: String) {
-        val a=viewModel.idSendReQuest.value+s+","
+        var d = ""
+        viewModel.guest(database, s)
+        val a = viewModel.idSendReQuest.value + s + ","
         database.child("request").child(host).child("sendRequest").setValue(a)
+        if (!viewModel.idSendReQuest1.value.equals("null"))
+            d = viewModel.idSendReQuest1.value.toString()
+        val b = d + host + ","
+        database.child("request").child(s).child("receiveRequest").setValue(b)
+
     }
 
 }

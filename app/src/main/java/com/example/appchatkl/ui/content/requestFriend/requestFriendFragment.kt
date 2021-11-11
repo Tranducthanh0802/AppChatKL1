@@ -23,11 +23,12 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class RequestFriendFragment : Fragment(),Decision {
+class RequestFriendFragment : Fragment(), Decision {
     lateinit var binding: RequestFriendFragmentBinding
-    private  var id=""
-    private val TAG="requestFriendFragment"
+    private var id = ""
+    private val TAG = "requestFriendFragment"
     lateinit var database: DatabaseReference
+
     companion object {
         fun newInstance() = RequestFriendFragment()
     }
@@ -38,7 +39,7 @@ class RequestFriendFragment : Fragment(),Decision {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.request_friend_fragment, container, false
         )
@@ -51,12 +52,13 @@ class RequestFriendFragment : Fragment(),Decision {
 
         database = Firebase.database.reference
         var list = ArrayList<User>()
-        var list1= ArrayList<User>()
+        var list1 = ArrayList<User>()
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-        id= commomFunction.getId(currentUser!!).toString()
-        viewModel.getInvitationAndRequest(database, list,list1,id)
-        val invitationAdapter= InvitationAdapter(this)
+        id = commomFunction.getId(currentUser!!).toString()
+        viewModel.getInvitationAndRequest(database, list, list1, id)
+
+        val invitationAdapter = InvitationAdapter(this)
         binding.recInviteReceive.apply {
             adapter = invitationAdapter
             layoutManager = LinearLayoutManager(
@@ -65,12 +67,12 @@ class RequestFriendFragment : Fragment(),Decision {
             )
             setHasFixedSize(true)
         }
-        viewModel.invitation.observe(viewLifecycleOwner  ,{
+        viewModel.invitation.observe(viewLifecycleOwner, {
             invitationAdapter.listConversation = it
-            Log.d(TAG, "onActivityCreated: "+it+" "+invitationAdapter.listConversation)
+            Log.d(TAG, "onActivityCreated: " + it + " " + invitationAdapter.listConversation)
             binding.recInviteReceive.adapter?.notifyDataSetChanged()
         })
-        val requestAdapter= RequestAdapter(this)
+        val requestAdapter = RequestAdapter(this)
         binding.recInviteSend.apply {
             adapter = requestAdapter
             layoutManager = LinearLayoutManager(
@@ -79,24 +81,34 @@ class RequestFriendFragment : Fragment(),Decision {
             )
             setHasFixedSize(true)
         }
-        viewModel.request.observe(viewLifecycleOwner  ,{
+        viewModel.request.observe(viewLifecycleOwner, {
             requestAdapter.listConversation = it
-            Log.d(TAG, "onActivityCreated: "+it+" "+invitationAdapter.listConversation)
+            Log.d(TAG, "onActivityCreated: " + it + " " + invitationAdapter.listConversation)
             binding.recInviteSend.adapter?.notifyDataSetChanged()
         })
     }
 
 
     override fun onClickYes(s: String) {
-        val a= viewModel.delete(viewModel.idSendReQuest.value.toString(),s)
+        viewModel.guest(database, s)
+        val a = viewModel.delete(viewModel.idSendReQuest.value.toString(), s)
         database.child("request").child(id).child("receiveRequest").setValue(a)
-        val b=viewModel.friend.value+s+","
+        val b = viewModel.friend.value + s + ","
         database.child("fiend").child(id).child("allId").setValue(b)
+        val c = viewModel.delete(viewModel.idSendReQuest1.value.toString(), id)
+        database.child("request").child(s).child("sendRequest").setValue(c)
+        val d = viewModel.friend1.value + id + ","
+        database.child("fiend").child(s).child("allId").setValue(d)
+
     }
 
     override fun onClikNo(s: String) {
-        val a= viewModel.delete(viewModel.idReceiveReQuest.value.toString(),s)
+        viewModel.guest(database, s)
+        val a = viewModel.delete(viewModel.idReceiveReQuest.value.toString(), s)
         database.child("request").child(id).child("sendRequest").setValue(a)
+        val b = viewModel.delete(viewModel.idReceiveReQuest1.value.toString(), id)
+        database.child("request").child(s).child("receiveRequest").setValue(a)
+
     }
 
 }

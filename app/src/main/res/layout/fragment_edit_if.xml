@@ -83,10 +83,10 @@
                 android:layout_width="match_parent"
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@drawable/topic_adap"
-                android:layout_height="@dimen/_70sdp">
+                android:layout_height="@dimen/_60sdp">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_15sdp"
                     android:text="@string/hovaten"
                     android:textSize="@dimen/text"
                     />
@@ -106,15 +106,15 @@
                 android:layout_width="match_parent"
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@drawable/topic_adap"
-                android:layout_height="@dimen/_70sdp">
+                android:layout_height="@dimen/_60sdp">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_15sdp"
                     android:text="@string/sdt"
                     android:textSize="@dimen/text"
                     />
                 <EditText
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:drawableRight="@drawable/personal1"
@@ -129,10 +129,10 @@
                 android:layout_width="match_parent"
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@drawable/topic_adap"
-                android:layout_height="@dimen/_70sdp">
+                android:layout_height="@dimen/_60sdp">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_15sdp"
                     android:text="@string/ngaysinh"
                     android:textSize="@dimen/text"
                     />

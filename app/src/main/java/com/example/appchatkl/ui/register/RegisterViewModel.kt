@@ -17,52 +17,53 @@ import com.google.firebase.ktx.Firebase
 
 class RegisterViewModel : ViewModel() {
     // TODO: Implement the ViewModel
-    val TAG="RegisterViewModel"
-     var _fullName = MutableLiveData<String>()
+    val TAG = "RegisterViewModel"
+    var _fullName = MutableLiveData<String>()
     val fullName: LiveData<String>
         get() = _fullName
-     var _email = MutableLiveData<String>()
+    var _email = MutableLiveData<String>()
     val email: LiveData<String>
         get() = _email
-     var _passWord = MutableLiveData<String>()
+    var _passWord = MutableLiveData<String>()
     val passWord: LiveData<String>
         get() = _passWord
     var isCheck: Boolean = false
-    var notification= MutableLiveData<String>()
-    var isShowNotification=false
+    var notification = MutableLiveData<String>()
+    var isShowNotification = false
 
-    fun saveIF(database: DatabaseReference,user:User,friend: Friend,request: Request){
-         database.child("user").child(user.id.toString()).setValue(user)
-         database.child("fiend").child(user.id.toString()).setValue(friend)
+    fun saveIF(database: DatabaseReference, user: User, friend: Friend, request: Request) {
+        database.child("user").child(user.id.toString()).setValue(user)
+        database.child("fiend").child(user.id.toString()).setValue(friend)
         database.child("request").child(user.id.toString()).setValue(request)
 
     }
-    fun register(database: DatabaseReference,user:User,friend: Friend,request: Request){
-        val account= Account(email.value.toString() ,passWord.value.toString())
-        isShowNotification=true
+
+    fun register(database: DatabaseReference, user: User, friend: Friend, request: Request) {
+        val account = Account(email.value.toString(), passWord.value.toString())
+        isShowNotification = true
 
         if (account.isValidEmail() == true
-            && account.isValidPassword() == true && !fullName.value.toString().isNullOrEmpty() && isCheck
+            && account.isValidPassword() == true && !fullName.value.toString()
+                .isNullOrEmpty() && isCheck
         ) {
             val auth: FirebaseAuth = Firebase.auth
             auth.createUserWithEmailAndPassword(account.email, account.password)
-                .addOnCompleteListener{ task ->
+                .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        user.id=auth.uid.toString()
-                        user.fullName=fullName.value.toString()
-                        saveIF(database,user,friend,request)
-                        notification.value="registration success "
+                        user.id = auth.uid.toString()
+                        user.fullName = fullName.value.toString()
+                        saveIF(database, user, friend, request)
+                        notification.value = "registration success "
 
                     } else {
                         // If sign in fails, display a message to the user.
-                        notification.value="registration failed "
+                        notification.value = "registration failed "
                     }
                 }
-        }else{
-            notification.value="registration failed "
+        } else {
+            notification.value = "registration failed "
         }
     }
-
 
 
 }

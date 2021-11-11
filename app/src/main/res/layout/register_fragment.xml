@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/_21sdp"
         android:layout_marginTop="@dimen/_20sdp"
-        android:background="#FAFAFA"
+
         >
         <ImageView
             android:layout_width="@dimen/_33sdp"
@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_3sdp"
                 android:hint="@string/hinthovaten"
+                android:drawableRight="@drawable/personal1"
                 android:text="@={register._fullName}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/edit" />
@@ -169,14 +170,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginBottom="@dimen/_25sdp"
+
+                android:layout_marginTop="@dimen/_10sdp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="@string/dacotaikhoan"
                     android:textSize="@dimen/text"
-                    android:gravity="bottom"/>
+                    android:gravity="start"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -184,7 +186,7 @@
                     android:textSize="@dimen/text"
                     android:textColor="@color/blueDark"
                     android:id="@+id/txtdangnhap"
-                    android:gravity="bottom"/>
+                    android:gravity="start"/>
 
 
             </LinearLayout>

@@ -12,8 +12,8 @@ import com.example.appchatkl.databinding.FriendLayoutAdapterBinding
 class FriendAdapter : RecyclerView.Adapter<FriendAdapter.MyViewHolder>() {
 
 
-    inner class MyViewHolder(val binding:FriendLayoutAdapterBinding) :
-        RecyclerView.ViewHolder(binding.root){
+    inner class MyViewHolder(val binding: FriendLayoutAdapterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
@@ -47,15 +47,17 @@ class FriendAdapter : RecyclerView.Adapter<FriendAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         val currentTvShow: User = listConversation[position]
-        currentTvShow.section=currentTvShow.fullName.toString().substring(0,1)
+        currentTvShow.section = currentTvShow.fullName.toString().substring(0, 1)
         holder.binding.apply {
-            user=currentTvShow
+            user = currentTvShow
 
         }
-        if(position > 0){
+        if (position > 0) {
             val i = position - 1;
-            if (i < listConversation.size && currentTvShow.fullName.substring(0,1).equals(listConversation.get(i).fullName.substring(0,1))){
-                holder.binding.mSection.visibility =View.GONE
+            if (i < listConversation.size && currentTvShow.fullName.substring(0, 1)
+                    .equals(listConversation.get(i).fullName.substring(0, 1))
+            ) {
+                holder.binding.mSection.visibility = View.GONE
             }
         }
 

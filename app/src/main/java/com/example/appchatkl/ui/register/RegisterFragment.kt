@@ -55,10 +55,10 @@ class RegisterFragment : Fragment() {
         val request = Request()
         binding.imgBack.setOnClickListener {
             requireActivity().onBackPressed()
-         }
+        }
 
         binding.btnRegister.setOnClickListener {
-            viewModel.register(database, user,friend,request)
+            viewModel.register(database, user, friend, request)
         }
 
         // TODO: Use the ViewModel

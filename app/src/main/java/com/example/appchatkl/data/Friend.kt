@@ -1,4 +1,4 @@
 package com.example.appchatkl.data
 
-class Friend(val allId:String="") {
+class Friend(val allId: String = "") {
 }

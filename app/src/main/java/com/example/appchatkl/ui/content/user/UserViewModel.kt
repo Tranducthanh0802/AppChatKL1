@@ -29,7 +29,7 @@ class UserViewModel : ViewModel() {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                _user.value=  User(
+                _user.value = User(
                     dataSnapshot!!.child("user").child(host)
                         .child("id").value.toString(),
                     dataSnapshot!!.child("user").child(host)
@@ -38,12 +38,10 @@ class UserViewModel : ViewModel() {
                         .child("linkPhoto").value.toString(),
                     date = dataSnapshot!!.child("user").child(host)
                         .child("date").value.toString(),
-                    phoneNumber =dataSnapshot!!.child("user").child(host)
+                    phoneNumber = dataSnapshot!!.child("user").child(host)
                         .child("phoneNumber").value.toString()
 
                 )
-
-
 
 
             }
@@ -55,8 +53,11 @@ class UserViewModel : ViewModel() {
         }
         postReference.addValueEventListener(postListener)
     }
-    fun save(postReference: DatabaseReference,
-             host: String){
+
+    fun save(
+        postReference: DatabaseReference,
+        host: String
+    ) {
 
     }
 

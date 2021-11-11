@@ -1,5 +1,5 @@
 package com.example.appchatkl.ui.content.user
 
 interface Find {
-    fun input(s:String)
+    fun input(s: String)
 }

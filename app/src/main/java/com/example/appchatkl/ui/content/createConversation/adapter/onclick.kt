@@ -4,6 +4,6 @@ import com.example.appchatkl.data.Conversation
 import com.example.appchatkl.data.CreateConversation
 
 interface onclick {
-    fun select(conversation:CreateConversation)
+    fun select(conversation: CreateConversation)
     fun minus(conversation: CreateConversation)
 }

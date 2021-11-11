@@ -64,9 +64,9 @@ class CreateConversationFragment : Fragment(), onclick {
         var list = ArrayList<CreateConversation>()
         var auth: FirebaseAuth = Firebase.auth
         val currentUser: FirebaseUser? = auth.currentUser
-        val id= commomFunction.getId(currentUser!!).toString()
+        val id = commomFunction.getId(currentUser!!).toString()
 
-        viewModel.getAllUser(database, list,id)
+        viewModel.getAllUser(database, list, id)
         binding.recyclerview.apply {
             adapter = createConversationAdapter
             layoutManager = LinearLayoutManager(
@@ -94,25 +94,24 @@ class CreateConversationFragment : Fragment(), onclick {
         })
 
         binding.btnOk.setOnClickListener {
-            s+=id+","
-            Log.d(TAG, "onActivityCreated: " +s)
+            s += id + ","
+            Log.d(TAG, "onActivityCreated: " + s)
             selectFriendAdapter.listConversation.forEach {
                 s += it.id + ","
-                Log.d(TAG, "onActivityCreated2: " +s)
+                Log.d(TAG, "onActivityCreated2: " + s)
             }
 
-             viewModel.check(database, s, Chat())
-            val controller=findNavController()
+            viewModel.check(database, s, Chat())
+            val controller = findNavController()
             val bundle = bundleOf("id" to s)
-            controller.navigate(R.id.chatFragment,bundle)
+            controller.navigate(R.id.chatFragment, bundle)
         }
-        binding.btnBack.setOnClickListener{
+        binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
-        binding.txtHuy.setOnClickListener{
+        binding.txtHuy.setOnClickListener {
             requireActivity().onBackPressed()
         }
-
 
 
     }
@@ -133,7 +132,7 @@ class CreateConversationFragment : Fragment(), onclick {
     override fun onStart() {
         super.onStart()
         list.clear()
-        s=""
+        s = ""
         viewModel.getListSelect(list)
     }
 
